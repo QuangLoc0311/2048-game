@@ -32,6 +32,16 @@ function addNumber() {
     grid[spot.x][spot.y] = r > 0.5 ? 2 : 4;
 }
 
+// one "move"
+function keyPressed() {
+    if (key == ' '){
+        for(let i = 0; i < 4; i++) {
+            grid[i] = slide(grid[i]);
+        }
+    }
+    addNumber();
+}
+
 function draw() {
     background(255);
     drawGrid();
@@ -43,6 +53,18 @@ function slide(row) {
     let zeros = Array(missing).fill(0);
     arr = arr.concate(zeros);
     return arr;
+}
+
+function combine(row) {
+    for(let i = 3; i >= 1; i--) {
+        let a = row[i];
+        let b = row[i - 1];
+        if (a == b) {
+            row[i] = a + b;
+            row[i - 1] = 0;
+            break;
+        }
+    }
 }
 
 function drawGrid() {
