@@ -32,14 +32,52 @@ function addNumber() {
     grid[spot.x][spot.y] = r > 0.5 ? 2 : 4;
 }
 
+function compare(a,b){
+    for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 4; j++) {
+            if (a[i][j] !== b[i][j]) {
+                return true;
+            }
+        }
+    }    
+    return false;
+}
+
+function copyGrid(grid) {
+    let extra = [
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0]
+    ];
+    for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 4; j++) {
+            extra[i][j] = grid[i][j];
+        }
+    }    
+    return extra;
+}
+
 // one "move"
 function keyPressed() {
     if (key == ' '){
+
+        let past = copyGrid(grid);
         for(let i = 0; i < 4; i++) {
-            grid[i] = slide(grid[i]);
+            grid[i] = operate(grid[i]);
+        }
+        let changed = compare(past, grid);
+        if (changed) {
+            addNumber();
         }
     }
-    addNumber();
+}
+
+function operate(row) {
+    row = slide(row);
+    row = combine(row);
+    row = slide(row);
+    return row;
 }
 
 function draw() {
@@ -47,14 +85,16 @@ function draw() {
     drawGrid();
 }
 
+//making new array
 function slide(row) {
     let arr = row.filter((val) => val);
     let missing = 4 - arr.length;
     let zeros = Array(missing).fill(0);
-    arr = arr.concate(zeros);
+    arr = zeros.concate(arr);
     return arr;
 }
 
+//operating on array itself
 function combine(row) {
     for(let i = 3; i >= 1; i--) {
         let a = row[i];
@@ -62,9 +102,9 @@ function combine(row) {
         if (a == b) {
             row[i] = a + b;
             row[i - 1] = 0;
-            break;
         }
     }
+    return row;
 }
 
 function drawGrid() {
