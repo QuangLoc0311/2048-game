@@ -1,4 +1,24 @@
 let grid;
+let score = 0;
+
+function isGameOver() {
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+            if (grid[i][j] == 0) {
+                return false;
+            }
+
+            if (i !== 3 && grid[i][j] === grid[i + 1][j]) {
+                return false;
+            }
+
+            if (j !== 3 && grid[i][j] === grid[i][j + 1]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
 
 function blankGrid() {
     return [
@@ -11,11 +31,12 @@ function blankGrid() {
 
 function setup() {
     createCanvas(400, 400);
+    noLoop();
+    // console.table(grid);
     grid = blankGrid();
-    console.table(grid);
     addNumber();
     addNumber();
-    console.table(grid);
+    updateCanvas();
 }
 
 function addNumber() {
@@ -30,10 +51,11 @@ function addNumber() {
             }
         }
     }
-    if (options.length > 0);
-    let spot = random(options);
-    let r = random(1);
-    grid[spot.x][spot.y] = r > 0.5 ? 2 : 4;
+    if (options.length > 0){
+        let spot = random(options);
+        let r = random(1);
+        grid[spot.x][spot.y] = r > 0.5 ? 2 : 4;
+    }
 }
 
 function compare(a, b) {
@@ -80,9 +102,9 @@ function keyPressed() {
     let rotated = false;
     let played = true;
 
-    if (keyCode === UP_ARROW) {
+    if (keyCode === DOWN_ARROW) {
         //Do nothing
-    } else if (keyCode === DOWN_ARROW) {
+    } else if (keyCode === UP_ARROW) {
         grid = flipGrid(grid);
         flipped = true;
     } else if (keyCode === RIGHT_ARROW) {
@@ -117,6 +139,12 @@ function keyPressed() {
         if (changed) {
             addNumber();
         }
+        updateCanvas();
+
+        let gameover = isGameOver();
+        if (gameover) {
+            console.log("game over");
+        }
     }
 
 }
@@ -128,27 +156,29 @@ function operate(row) {
     return row;
 }
 
-function draw() {
+function updateCanvas() {
     background(255);
     drawGrid();
+    document.getElementById('score').innerHTML = score;
 }
 
 //making new array
 function slide(row) {
-    let arr = row.filter((val) => val);
+    let arr = row.filter(val => val);
     let missing = 4 - arr.length;
     let zeros = Array(missing).fill(0);
-    arr = zeros.concate(arr);
+    arr = zeros.concat(arr);
     return arr;
 }
 
-//operating on array itself
+// //operating on array itself
 function combine(row) {
     for (let i = 3; i >= 1; i--) {
         let a = row[i];
         let b = row[i - 1];
         if (a == b) {
             row[i] = a + b;
+            score += row[i];
             row[i - 1] = 0;
         }
     }
@@ -166,7 +196,7 @@ function drawGrid() {
 
             let val = grid[i][j];
             if (grid[i][j] !== 0) {
-                textAlign(CENTER, CENTER);
+                textAlign(CENTER,CENTER);
                 textSize(64);
                 fill(0);
                 noStroke();
