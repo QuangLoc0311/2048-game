@@ -1,33 +1,7 @@
 let grid;
 let score = 0;
 
-function isGameOver() {
-    for (let i = 0; i < 3; i++) {
-        for (let j = 0; j < 3; j++) {
-            if (grid[i][j] == 0) {
-                return false;
-            }
 
-            if (i !== 3 && grid[i][j] === grid[i + 1][j]) {
-                return false;
-            }
-
-            if (j !== 3 && grid[i][j] === grid[i][j + 1]) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
-function blankGrid() {
-    return [
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0]
-    ];
-}
 
 function setup() {
     createCanvas(400, 400);
@@ -58,16 +32,6 @@ function addNumber() {
     }
 }
 
-function compare(a, b) {
-    for (let i = 0; i < 4; i++) {
-        for (let j = 0; j < 4; j++) {
-            if (a[i][j] !== b[i][j]) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
 
 function copyGrid(grid) {
     let extra = blankGrid();
@@ -145,6 +109,11 @@ function keyPressed() {
         if (gameover) {
             console.log("game over");
         }
+
+        let gamewon = isGameWon();
+        if(gamewon) {
+            console.log("Game Won");
+        }
     }
 
 }
@@ -191,15 +160,23 @@ function drawGrid() {
         for (let j = 0; j < 4; j++) {
             noFill();
             strokeWeight(2);
-            stroke(0);
-            rect(i * w, j * w, w, w);
-
             let val = grid[i][j];
+            let s = val.toString();
+            stroke(0);
+            if(val != 0) {
+                stroke(0);
+                fill(colorsAndSizes[s].color);
+            } else {
+                noFill();
+            }
+            
+            rect(i * w, j * w, w, w,8);
+
             if (grid[i][j] !== 0) {
                 textAlign(CENTER,CENTER);
-                textSize(64);
-                fill(0);
                 noStroke();
+                fill(0);
+                textSize(colorsAndSizes[s].size);
                 text(val, i * w + w / 2, j * w + w / 2);
             }
         }
